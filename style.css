@@ -1,0 +1,222 @@
+body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+}
+.content-section {
+    display: none;
+}
+.content-section.active {
+    display: block;
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    cursor: help;
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 220px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -110px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+.tooltip.active .tooltiptext { /* For touch devices */
+    visibility: visible;
+    opacity: 1;
+}
+
+details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+    display: none;
+}
+details[open] summary ~ * {
+    animation: sweep .5s ease-in-out;
+}
+@keyframes sweep {
+    0%    {opacity: 0; transform: translateY(-10px)}
+    100%  {opacity: 1; transform: translateY(0px)}
+}
+/* Mind map styles are now primarily handled by JS for dynamic coloring */
+.mindmap-node text {
+    cursor: pointer;
+    transition: transform 0.1s ease-out, font-size 0.1s ease-out;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+.mindmap-node:hover text {
+    /* transform: scale(1.05); Optional: if you want text to scale slightly */
+    text-decoration: underline;
+    /* text-shadow: 0 0 5px currentColor; */ /* Glow removed from text, will be on oval */
+}
+.mindmap-line {
+    /* stroke and stroke-width are set in JS */
+    pointer-events: none; /* Lines should not interfere with clicks */
+}
+.mindmap-selection-circle {
+    pointer-events: none; /* Circle should not interfere with clicks on text */
+}
+.draggable {
+    cursor: grab;
+}
+.dragging {
+    cursor: grabbing;
+    opacity: 0.7;
+}
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5); 
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+    max-width: 700px;
+    border-radius: 8px;
+    position: relative;
+}
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-button.active {
+    background-color: #3b82f6; /* bg-blue-500 */
+    color: white;
+}
+.nav-button:hover:not(.active) {
+     background-color: #e5e7eb; /* bg-gray-200 */
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .nav-button.active {
+        background-color: #3b82f6; /* bg-blue-500 */
+        color: white;
+    }
+     .nav-button:hover:not(.active) {
+        background-color: #e5e7eb; /* bg-gray-200 */
+    }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.flashcard {
+    perspective: 1000px;
+    cursor: pointer;
+    min-height: 12rem; /* 192px, adjust as needed */
+}
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb; /* Added a light border */
+}
+.flashcard-front {
+    background-color: #f9fafb; /* bg-gray-50 slightly lighter */
+    color: #1f2937; /* text-gray-800 */
+}
+.flashcard-back {
+    background-color: #eff6ff; /* bg-blue-50 */
+    color: #1e40af; /* text-blue-800 */
+    transform: rotateY(180deg);
+}
+
+/* Styles for collapsible sidebar */
+@media (min-width: 768px) {
+    #sidebar {
+        transition: width 0.3s ease-in-out;
+        overflow-x: hidden; /* Prevent content spill during transition */
+    }
+
+    #sidebar.collapsed {
+        width: 4.5rem; /* 72px */
+    }
+
+    #sidebar.collapsed #sidebar-title {
+        display: none;
+    }
+
+    #sidebar.collapsed .nav-button {
+        justify-content: center; /* Center icon */
+        padding-left: 0.5rem; 
+        padding-right: 0.5rem;
+        font-size: 0; /* Hides the text node */
+    }
+
+    #sidebar.collapsed .nav-button svg {
+        margin-right: 0 !important; /* Remove margin from icon, override Tailwind's md:mr-2 */
+    }
+    
+    #sidebar.collapsed #sidebar-toggle-btn {
+        /* Future styling for the button in collapsed state if needed */
+    }
+}

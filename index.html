@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Políticas Sociais no Federalismo Brasileiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <nav id="sidebar" class="bg-white shadow-lg fixed top-0 left-0 right-0 z-50 p-1 flex items-center space-x-1 overflow-x-auto whitespace-nowrap h-14 no-scrollbar 
+                           md:relative md:w-64 md:flex-col md:items-stretch md:space-x-0 md:space-y-1 md:h-screen md:overflow-y-auto md:p-4 md:sticky md:shadow-lg">
+            
+            <button id="sidebar-toggle-btn" class="hidden md:block md:self-end p-2 mb-2 text-slate-600 hover:text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <h1 id="sidebar-title" class="hidden md:block text-xl font-bold text-blue-600 mb-4 text-center">Políticas Sociais no Federalismo Brasileiro</h1>
+            
+            <button data-target="inicio" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Início
+            </button>
+            <button data-target="resumo" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+                Resumo
+            </button>
+            <button data-target="linhadotempo" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><path d="M17.5 17.5 16 16.25V14"/><path d="M22 16a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"/></svg>
+                Linha do Tempo
+            </button>
+            <button data-target="flashcards" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>
+                Flashcards
+            </button>
+            <button data-target="mapamental" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                Mapa Mental
+            </button>
+            <button data-target="personagens" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Personagens
+            </button>
+            <button data-target="glossario" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Glossário
+            </button>
+            <button data-target="correlacoes" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg>
+                Correlações
+            </button>
+            <button data-target="quiz" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M19.439 7.852c-2.536-2.536-6.63-2.535-9.165 0a6.499 6.499 0 0 0-1.346 6.071 6.53 6.53 0 0 0 3.841 3.841A6.499 6.499 0 0 0 19.44 7.852Z"/><path d="M12.999 12.501 11.5 11l-2 2"/><path d="m15.001 9.501-1.5-1.5 0 3.5"/><path d="M9.501 15.001l1.5 1.5 0-3.5"/><path d="M11.001 18.501 9.5 20l2-2"/><path d="M18.501 11.001 20 9.5l-2 2"/><path d="M7.852 4.561A6.501 6.501 0 0 0 4.56 7.852"/><path d="M4.561 16.148A6.501 6.501 0 0 0 7.852 19.44"/><path d="M16.148 19.44A6.501 6.501 0 0 0 19.44 16.148"/></svg>
+                Quiz
+            </button>
+            <button data-target="exemplosprovas" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><path d="M20 19.5v.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8.5L20 7.5V10"/><path d="M8 18h1.586a2 2 0 0 0 1.414-.586l7-7L15.586 9l-7 7A2 2 0 0 0 8 17.414V18Z"/></svg>
+                Ex. Provas
+            </button>
+            <button data-target="linksuteis" class="nav-button flex-shrink-0 inline-flex items-center px-3 py-2 rounded-md text-xs sm:text-sm md:w-full md:text-left md:px-4 md:py-2 md:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden md:inline-block md:mr-2 h-5 w-5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                Links Úteis
+            </button>
+        </nav>
+
+        <main class="flex-1 p-6 md:p-10 bg-slate-100 overflow-y-auto mt-14 md:mt-0">
+            <section id="inicio" class="content-section active">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Bem-vindo ao Infográfico Interativo!</h2>
+                <p class="text-lg mb-4">
+                    Este material foi elaborado para auxiliar seus estudos sobre a <strong>Coordenação de Políticas Sociais no Federalismo Brasileiro</strong>,
+                    um tema crucial para Analistas Técnicos de Políticas Sociais (ATPS).
+                </p>
+                <p class="mb-4">
+                    Navegue pelas seções utilizando o menu para explorar resumos, linhas do tempo, conceitos-chave,
+                    personagens importantes, e testar seus conhecimentos com quizzes e exemplos de provas discursivas.
+                </p>
+                <p class="mb-4">
+                    O objetivo é fornecer uma ferramenta de estudo dinâmica e interativa, facilitando a compreensão
+                    da complexa teia de relações, mecanismos e desafios envolvidos na gestão de políticas sociais
+                    em um contexto federativo como o brasileiro.
+                </p>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-6 rounded-md" role="alert">
+                    <p class="font-bold">Como usar:</p>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Clique nos itens do menu para mudar de seção.</li>
+                        <li>Em seções como "Resumo" e "Glossário", procure por termos sublinhados para ver <span class="tooltip">tooltips<span class="tooltiptext">Explicações rápidas!</span></span> com mais informações.</li>
+                        <li>Interaja com os flashcards, o mapa mental e o quiz para um aprendizado mais ativo.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="resumo" class="content-section space-y-6">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Resumo: Coordenação de Políticas Sociais no Federalismo Brasileiro</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2 text-blue-600">Introdução</h3>
+                    <p class="mb-4">
+                        O federalismo brasileiro, caracterizado por expressivas desigualdades regionais e a atuação de múltiplas esferas de governo sobre o mesmo território e população, torna o debate sobre a coordenação de políticas públicas de fundamental importância. Este resumo analisa os desafios e mecanismos de coordenação federativa, com foco nas políticas sociais.
+                    </p>
+
+                    <h3 class="text-xl font-semibold mb-3 text-blue-600">Principais Temas e Ideias Centrais</h3>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            A Complexidade da Coordenação Federativa
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A coordenação no federalismo brasileiro envolve a articulação entre diferentes níveis de governo (União, Estados, Municípios), mecanismos de incentivo e indução, normatizações, desenho de programas, redefinição de responsabilidades, transferências de recursos, e capacitação técnica (<span class="tooltip">Lotta, Gonçalves, Bitelman<span class="tooltiptext">Autores de análise sobre o panorama das políticas públicas.</span></span>). A descentralização, vista como uma mudança na distribuição territorial da autoridade, não é unidimensional; o governo central pode transferir autoridade em uma dimensãatilde;o enquanto concentra em outra (<span class="tooltip">Rodden, 2004<span class="tooltiptext">Autor que discute a multidimensionalidade da descentralização.</span></span>).</p>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            O Papel Central da União e a Indução por Financiamento
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A literatura destaca que a disponibilidade de recursos federais fortaleceu a posição da União na tomada de decisão sobre o desenho das políticas sociais (<span class="tooltip">policy decision-making<span class="tooltiptext">Poder decisório sobre o desenho da política.</span></span>), deixando a execução (<span class="tooltip">policy making<span class="tooltiptext">Poder decisório sobre a implementação da política.</span></span>) a cargo dos outros níveis de governo (<span class="tooltip">Arretche, 2012<span class="tooltiptext">Autora que analisa o papel da União no desenho de políticas sociais.</span></span>). A União utiliza a alocação de recursos como um dos principais instrumentos de indução para a implementação das políticas e programas pelos entes subnacionais. No entanto, a desvinculação total da aplicação dos repasses federais, como defendido por alguns gestores municipais e estaduais, reduziria a capacidade da União de influir na implementação (<span class="tooltip">CoordRelnterPolSociais.pdf<span class="tooltiptext">Documento de referência sobre coordenação e relações intergovernamentais.</span></span>).</p>
+                        <blockquote class="mt-2 border-l-4 border-blue-500 pl-4 italic">
+                            "A atuação do governo federal na coordenação do sistema diminuiu alguns desses riscos. Contudo, a alteração radical nas formas de repasse dos recursos federais em saúde reduziria drasticamente a possibilidade de o órgão influir na implementação."
+                        </blockquote>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Descentralização e seus Efeitos no SUS
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A tendência municipalista aprofundada nos anos 90 no <span class="tooltip">SUS<span class="tooltiptext">Sistema Único de Saúde.</span></span>, apesar de ter ampliado a autonomia municipal, resultou em "elevação generalizada do gasto acompanhada de superposição e de dispersão das ações" (<span class="tooltip">Arretche, 2004<span class="tooltiptext">Análise sobre os efeitos da descentralização no SUS nos anos 90.</span></span>). Esse período foi caracterizado como de fragmentação da gestão setorial com "comportamentos predatórios e não cooperativos entre entes municipais" (<span class="tooltip">Machado, 2007<span class="tooltiptext">Análise sobre a fragmentação da gestão no SUS.</span></span>). Críticas recentes apontam que os incentivos financeiros federais no SUS favoreceriam a centralização (<span class="tooltip">Mendes, 2017<span class="tooltiptext">Crítica à centralização induzida por incentivos financeiros no SUS.</span></span>).</p>
+                         <blockquote class="mt-2 border-l-4 border-blue-500 pl-4 italic">
+                            "A tendência municipalista, aprofundada pela NOB no 1/1993 foi, contudo, refreada com a NOB de 1996, cujo diagnóstico apontava a necessidade de enfrentar o risco à 'atomização desordenada' dos sistemas municipais."
+                        </blockquote>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Mecanismos de Financiamento e Coordenação no SUS
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A <span class="tooltip">Emenda Constitucional nº 29/2000<span class="tooltiptext">Vinculou recursos para estados e municípios para o SUS.</span></span> foi crucial para o financiamento compartilhado do SUS. No entanto, a <span class="tooltip">EC nº 95/2016<span class="tooltiptext">Congelou o piso de gastos em saúde em termos reais (Teto de Gastos).</span></span> aponta para restrição de recursos. Medidas de flexibilização do gasto foram implementadas (<span class="tooltip">Portaria nº 3.992/2017<span class="tooltiptext">Unificou repasses de custeio no SUS, dando maior flexibilidade.</span></span>), o que concede maior flexibilidade, mas também pode levar ao deslocamento de recursos para prioridades locais em detrimento das nacionais.</p>
+                    </details>
+
+                     <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            O SUAS como Exemplo de Coordenação (Relativamente) Bem-Sucedida
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">O <span class="tooltip">Sistema Único de Assistência Social (Suas)<span class="tooltiptext">Sistema público de assistência social do Brasil.</span></span> é apresentado como um caso de sucesso relativo na superação da fragmentação. O alinhamento municipal foi impulsionado por instrumentos financeiros, normatizações claras e diálogo federativo. A expansão dos recursos federais foi fundamental.</p>
+                        <blockquote class="mt-2 border-l-4 border-blue-500 pl-4 italic">
+                           "Importante advertir que a construção de um sistema é acima de tudo uma construção política. Nesses termos, cabe destacar que dois aspectos foram fundamentais para viabilizar o Suas: recursos novos e intensa pactuação interfederativa das novas regras de financiamento na CIT."
+                        </blockquote>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            As Comissões Intergestores (CIT, CIB)
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">As <span class="tooltip">Comissões Intergestores Tripartite (CIT)<span class="tooltiptext">Instância de negociação entre União, Estados e Municípios.</span></span> e <span class="tooltip">Bipartite (CIB)<span class="tooltiptext">Instância de negociação entre Estados e Municípios.</span></span> são espaços cruciais de negociação e pactuação intergovernamental. A União é a principal proponente, e estados e municípios são os principais "<span class="tooltip">veto players<span class="tooltiptext">Atores que podem bloquear ou dificultar decisões.</span></span>" (<span class="tooltip">Palotti e Machado<span class="tooltiptext">Autores de estudo sobre pactuações nas comissões intergestores.</span></span>).</p>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Desafios na Regionalização e Planejamento Ascendente
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A regionalização como ação cooperada entre municípios no SUS não avançou como esperado. O planejamento ascendente, previsto em lei, não se consolidou.</p>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Impacto das Emendas Individuais
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">As emendas parlamentares são vistas como um obstáculo à coordenação e ao planejamento no SUS, pois contornam e esvaziam os colegiados e instrumentos de planejamento.</p>
+                    </details>
+
+                    <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Variações Decisórias Locais e Integralidade
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">A autonomia municipal, embora importante, não garante plena autonomia decisória. Variações locais podem comprometer a realização de garantias sociais plenas.</p>
+                    </details>
+
+                     <details class="mb-4 bg-slate-50 p-4 rounded-md">
+                        <summary class="font-semibold text-lg text-slate-700 flex justify-between items-center">
+                            Pactos de Aprimoramento da Gestão
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <p class="mt-2">No Suas, os pactos de aprimoramento da gestão foram utilizados como instrumentos de coordenação, com metas e prioridades definidas nacionalmente e pactuadas, especialmente no nível municipal.</p>
+                    </details>
+
+                    <h3 class="text-xl font-semibold mb-2 mt-6 text-blue-600">Conclusão</h3>
+                    <p>
+                        A gestão e coordenação de políticas sociais no federalismo brasileiro é um processo complexo e dinâmico. O financiamento federal é indutor, mas enfrenta desafios. As instâncias intergestores são importantes, mas a assimetria de poder e interesses locais podem limitar sua efetividade. O Suas é um exemplo relativo de sucesso. Garantir integralidade e equidade continua sendo um desafio.
+                    </p>
+                </div>
+            </section>
+
+            <section id="linhadotempo" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Linha do Tempo: Federalismo e Políticas Sociais</h2>
+                <div class="relative border-l-4 border-blue-300 ml-3 md:ml-6 space-y-8 py-4">
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">Séculos XVIII-XIX</h4>
+                        <p class="text-sm text-gray-500">Construção Histórica da Cidadania</p>
+                        <p class="mt-1 text-sm">Séc. XVIII: Direitos civis (liberdade individual, propriedade). Séc. XIX: Direitos políticos (participação no poder).</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">Antes de 1988</h4>
+                        <p class="text-sm text-gray-500">Assistência Social Fragmentada</p>
+                        <p class="mt-1 text-sm">Atuação fragmentada na política de assistência social.</p>
+                    </div>
+                     <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">1990</h4>
+                        <p class="text-sm text-gray-500">Lei Orgânica da Saúde e Planejamento Ascendente</p>
+                        <p class="mt-1 text-sm">Publicação da <span class="tooltip">Lei nº 8.080<span class="tooltiptext">Dispõe sobre as condições para a promoção, proteção e recuperação da saúde, a organização e o funcionamento dos serviços correspondentes e dá outras providências.</span></span>, que previa o planejamento ascendente no SUS. Antes disso, pouca pactuação com estados e municípios; descentralização "tutelada".</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">Década de 1990</h4>
+                        <p class="text-sm text-gray-500">Intensa Descentralização no SUS</p>
+                        <p class="mt-1 text-sm">Ampliação da autonomia municipal, mas com superposição e dispersão de ações. Fragmentação da gestão setorial. <span class="tooltip">NOB 01/1993<span class="tooltiptext">Norma Operacional Básica do SUS que aprofundou a municipalização.</span></span> aprofunda tendência municipalista. <span class="tooltip">NOB 01/1996<span class="tooltiptext">Norma Operacional Básica do SUS que buscou refrear a atomização e introduziu a PPI.</span></span> refreia municipalização, introduz PPI.</p>
+                    </div>
+                     <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">2000</h4>
+                        <p class="text-sm text-gray-500">EC nº 29 e Financiamento do SUS</p>
+                        <p class="mt-1 text-sm">Aprovação da <span class="tooltip">Emenda Constitucional nº 29/2000<span class="tooltiptext">Vinculou recursos das três esferas de governo para o financiamento da saúde.</span></span>, crucial para o financiamento compartilhado do SUS.</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">Após 2005</h4>
+                        <p class="text-sm text-gray-500">Expansão do SUAS</p>
+                        <p class="mt-1 text-sm">Expansão de recursos federais na assistência social, implementação de serviços continuados. Intensa pactuação interfederativa na <span class="tooltip">CIT<span class="tooltiptext">Comissão Intergestores Tripartite.</span></span>.</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">2011</h4>
+                        <p class="text-sm text-gray-500">Adesão ao SUAS e IGD-Suas</p>
+                        <p class="mt-1 text-sm">99,5% dos municípios aderem ao SUAS. Introdução do <span class="tooltip">IGD-Suas<span class="tooltiptext">Índice de Gestão Descentralizada do SUAS, incentivo financeiro.</span></span>. Decreto 7.508 regulamenta Lei 8.080/1990, foca em Redes Regionais de Atenção à Saúde (RRAS).</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">2016</h4>
+                        <p class="text-sm text-gray-500">EC nº 95 (Teto de Gastos)</p>
+                        <p class="mt-1 text-sm">Aprovação da <span class="tooltip">Emenda Constitucional nº 95/2016<span class="tooltiptext">Estabeleceu teto para despesas primárias federais, congelando o piso de gastos em saúde em termos reais.</span></span>, impactando o financiamento da saúde.</p>
+                    </div>
+                    <div class="timeline-item pl-6 md:pl-8 relative">
+                        <div class="absolute -left-3.5 top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                        <h4 class="font-semibold text-lg text-blue-600">2017</h4>
+                        <p class="text-sm text-gray-500">Flexibilização de Repasses no SUS</p>
+                        <p class="mt-1 text-sm">Portaria nº 3.992/MS unifica repasses de custeio, buscando flexibilizar o uso dos recursos pelos gestores locais.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="flashcards" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Flashcards (FAQ)</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="flashcardsContainer">
+                    </div>
+                </section>
+
+            <section id="mapamental" class="content-section text-slate-200">
+                <h2 class="text-3xl font-bold mb-6 text-sky-400">Mapa Mental Interativo</h2>
+                <p class="mb-4 text-slate-400">Selecione um tópico para ver o mapa mental. Clique nos nós para expandir informações. Arraste os elementos.</p>
+                
+                <div id="mindmapSelectorContainer" class="mb-4 flex flex-wrap gap-2">
+                    <!-- Buttons will be added here by JS -->
+                </div>
+
+                <div id="mindmapInfoPanel" class="mb-4 p-4 bg-slate-800 border border-slate-700 rounded-md hidden">
+                    <h4 id="mindmapInfoTitle" class="font-semibold text-lg text-sky-400"></h4>
+                    <p id="mindmapInfoContent" class="text-sm text-slate-300"></p>
+                </div>
+                <div class="bg-slate-900 p-2 sm:p-6 rounded-lg shadow-md overflow-x-auto">
+                    <svg id="mindmapSvg" width="800" height="600" class="mx-auto">
+                        </svg>
+                </div>
+            </section>
+
+            <section id="personagens" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Personagens e Atores Relevantes</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Governo Federal (União)</h4>
+                        <p class="text-sm mt-1">Papel central na <span class="tooltip">coordenação<span class="tooltiptext">Articulação entre diferentes níveis de governo e mecanismos para implementação de políticas. (Resumo)</span></span>, <span class="tooltip">financiamento<span class="tooltiptext">Principal instrumento de indução da União para implementação de políticas. (Resumo)</span></span> e <span class="tooltip">desenho de políticas sociais<span class="tooltiptext">Refere-se ao 'policy decision-making', onde a União tem papel central. (Resumo, Arretche)</span></span>. Proponente majoritário nas <span class="tooltip">comissões intergovernamentais<span class="tooltiptext">Instâncias como CIT e CIB, espaços de negociação e pactuação. (Resumo)</span></span>.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Estados</h4>
+                        <p class="text-sm mt-1"><span class="tooltip">Autonomia política e administrativa<span class="tooltiptext">Capacidade de autogoverno e gestão própria. (Linha do Tempo - Personagens)</span></span>. Papel estratégico no <span class="tooltip">SUS<span class="tooltiptext">Sistema Único de Saúde. (Glossário)</span></span> (<span class="tooltip">regionalização<span class="tooltiptext">Ação cooperada entre municípios para organizar oferta de serviços. (Glossário)</span></span>, <span class="tooltip">PDR<span class="tooltiptext">Plano Diretor de Regionalização, define a rede de atenção à saúde estadual. (Glossário)</span></span>, <span class="tooltip">PPI<span class="tooltiptext">Programação Pactuada e Integrada, instrumento de planejamento do SUS. (Glossário)</span></span>). Podem ser "<span class="tooltip">veto players<span class="tooltiptext">Atores que podem bloquear ou dificultar decisões. (Glossário)</span></span>".</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Municípios</h4>
+                        <p class="text-sm mt-1">Principais <span class="tooltip">executores de políticas<span class="tooltiptext">Responsáveis pela implementação de políticas definidas em outros níveis. (Resumo - Arretche)</span></span>. Autonomia varia com porte e região. Alta adesão ao <span class="tooltip">SUAS<span class="tooltiptext">Sistema Único de Assistência Social. (Glossário)</span></span>. Pressionados por demandas locais.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Arretche, Marta</h4>
+                        <p class="text-sm mt-1">Pesquisadora com importantes análises sobre <span class="tooltip">federalismo<span class="tooltiptext">Sistema de governo com divisão de poder entre União, estados e municípios. (Resumo)</span></span>, <span class="tooltip">descentralização<span class="tooltiptext">Transferência de autoridade e responsabilidades para níveis subnacionais. (Glossário)</span></span> e políticas sociais no Brasil, especialmente o SUS. Destaca o papel da União no desenho das políticas (<span class="tooltip">policy decision-making<span class="tooltiptext">Poder decisório sobre o desenho e as diretrizes de uma política pública. (Glossário)</span></span>).</p>
+                    </div>
+                     <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Machado, José Angelo</h4>
+                        <p class="text-sm mt-1">Pesquisador que analisou a <span class="tooltip">fragmentação da gestão setorial<span class="tooltiptext">Dispersão e falta de articulação na gestão de um setor específico, como o SUS nos anos 90. (Resumo)</span></span> no SUS nos anos 90 e a "<span class="tooltip">armadilha da decisão conjunta<span class="tooltiptext">Dificuldade de efetivar decisões que dependem da cooperação de múltiplos atores com poder de veto. (FAQ 5)</span></span>" na coordenação federativa.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h4 class="font-semibold text-lg text-blue-600">Piola, Benevides e Vieira</h4>
+                        <p class="text-sm mt-1">Autores que analisaram o impacto da <span class="tooltip">EC nº 29/2000<span class="tooltiptext">Emenda Constitucional que vinculou recursos para saúde, fortalecendo o financiamento compartilhado do SUS. (Glossário)</span></span> no <span class="tooltip">financiamento compartilhado do SUS<span class="tooltiptext">Modelo onde União, Estados e Municípios contribuem financeiramente para o SUS. (Resumo)</span></span>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="glossario" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Glossário de Termos Chave</h2>
+                <div class="space-y-4" id="glossarioContainer">
+                </div>
+            </section>
+
+            <section id="correlacoes" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Correlações entre os Temas</h2>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-blue-600 mb-2">Financiamento e Coordenação Federal</h3>
+                        <p>O <strong class="text-blue-500 tooltip">financiamento federal<span class="tooltiptext">Principal instrumento da União para induzir políticas sociais. (Resumo)</span></strong> é um dos principais instrumentos de <strong class="text-blue-500 tooltip">coordenação<span class="tooltiptext">Articulação da União com entes subnacionais para implementar políticas. (Resumo)</span></strong> da União. Através de <strong class="text-purple-500 tooltip">transferências (vinculadas ou fundo a fundo)<span class="tooltiptext">Mecanismos de repasse de recursos federais para estados e municípios. (Glossário)</span></strong> e incentivos, o governo federal induz a adesão dos entes subnacionais a políticas e programas nacionais. A <strong class="text-red-500 tooltip">EC nº 29/2000<span class="tooltiptext">Emenda que vinculou recursos para saúde, fortalecendo o financiamento compartilhado do SUS. (Glossário)</span></strong> fortaleceu o financiamento compartilhado do SUS, mas a <strong class="text-red-500 tooltip">EC nº 95/2016 (Teto de Gastos)<span class="tooltiptext">Emenda que congelou gastos federais, restringindo recursos para políticas sociais. (Glossário)</span></strong> impõe restrições, desafiando essa coordenação.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-blue-600 mb-2">Descentralização, Autonomia e Fragmentação</h3>
+                        <p>A <strong class="text-green-500 tooltip">descentralização<span class="tooltiptext">Transferência de responsabilidades do nível federal para estados e municípios. (Glossário)</span></strong> de políticas como o SUS e o SUAS buscou dar mais <strong class="text-yellow-500 tooltip">autonomia aos municípios<span class="tooltiptext">Capacidade dos municípios de gerir políticas e recursos localmente. (Resumo)</span></strong>. Contudo, esse processo, especialmente nos anos 90, levou à <strong class="text-orange-500 tooltip">fragmentação<span class="tooltiptext">Dispersão de ações e falta de integração na gestão, comum no SUS nos anos 90. (Resumo)</span></strong>, superposição de ações e dificuldades de <strong class="text-blue-500 tooltip">coordenação regional<span class="tooltiptext">Articulação entre municípios de uma mesma região para otimizar serviços. (Resumo)</span></strong>. As <strong class="text-indigo-500 tooltip">NOBs (Normas Operacionais Básicas)<span class="tooltiptext">Normativas do SUS que buscaram organizar a descentralização e pactuação. (Linha do Tempo)</span></strong> do SUS tentaram modular esse processo.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-blue-600 mb-2">Pactuação Intergovernamental e Veto Players</h3>
+                        <p>Instâncias como a <strong class="text-pink-500 tooltip">CIT e CIB<span class="tooltiptext">Comissões Intergestores Tripartite e Bipartite, instâncias de negociação e pactuação. (Glossário)</span></strong> são cruciais para a <strong class="text-pink-500 tooltip">pactuação<span class="tooltiptext">Processo de acordo e negociação entre diferentes níveis de governo. (Resumo)</span></strong> de normas e recursos. No entanto, a União, como principal proponente, enfrenta <strong class="text-gray-500 tooltip">"veto players"<span class="tooltiptext">Atores (estados/municípios) que podem bloquear ou dificultar decisões propostas pela União. (Glossário)</span></strong> (estados e municípios) que podem questionar ou dificultar acordos, evidenciando a tensão na <strong class="tooltip">"armadilha da decisão conjunta"<span class="tooltiptext">Situação onde a interdependência decisória dificulta a cooperação efetiva. (FAQ 5)</span></strong>. Os <strong class="text-teal-500 tooltip">Pactos de Aprimoramento da Gestão<span class="tooltiptext">Instrumentos no SUAS para pactuar metas e prioridades com os municípios. (Glossário)</span></strong> no SUAS são exemplos de instrumentos de pactuação com metas.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-blue-600 mb-2">SUAS vs. SUS: Modelos de Coordenação</h3>
+                        <p>O <strong class="text-teal-500 tooltip">SUAS<span class="tooltiptext">Sistema Único de Assistência Social, exemplo de coordenação com forte indução federal. (Resumo)</span></strong> é visto como um modelo relativamente mais bem-sucedido de <strong class="text-blue-500 tooltip">coordenação<span class="tooltiptext">Articulação impulsionada por recursos, normas claras e diálogo federativo no SUAS. (Resumo)</span></strong>, impulsionado por recursos federais claros, normatizações e diálogo. O <strong class="text-red-500 tooltip">SUS<span class="tooltiptext">Sistema Único de Saúde, mais antigo e com desafios de fragmentação e regionalização. (Resumo)</span></strong>, mais antigo e complexo, enfrenta desafios persistentes de <strong class="text-orange-500 tooltip">fragmentação<span class="tooltiptext">Persistente desafio no SUS, dificultando a integração de serviços. (Resumo)</span></strong>, regionalização incipiente e impacto de <strong class="text-gray-500 tooltip">emendas parlamentares<span class="tooltiptext">Recursos que contornam o planejamento e a coordenação no SUS. (Resumo)</span></strong> que dificultam o planejamento.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quiz" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Quiz Interativo</h2>
+                <button id="submitQuiz" class="mb-6 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Validar Respostas</button>
+                <div id="quizResults" class="mb-6 hidden bg-blue-50 p-4 rounded-lg border border-blue-200"></div>
+                <button id="restartQuiz" class="mb-6 hidden bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Refazer Quiz</button>
+                <div id="quizContainer" class="space-y-6 bg-white p-6 rounded-lg shadow-md">
+                </div>
+            </section>
+
+            <section id="exemplosprovas" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Exemplos de Provas Discursivas</h2>
+                <div class="space-y-8" id="examExamplesContainer">
+                </div>
+            </section>
+
+            <section id="linksuteis" class="content-section">
+                <h2 class="text-3xl font-bold mb-6 text-blue-700">Links Úteis</h2>
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <a href="https://notebooklm.google.com/notebook/c7f9812a-5eac-4c88-bd7f-1755fe0bc32c/audio" target="_blank" class="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic mx-auto mb-2 text-blue-500"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                        <p class="font-semibold">Podcast</p>
+                    </a>
+                    <a href="https://notebooklm.google.com/notebook/c7f9812a-5eac-4c88-bd7f-1755fe0bc32c" target="_blank" class="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook mx-auto mb-2 text-green-500"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+                        <p class="font-semibold">NotebookLM</p>
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1esdbRSjmLOZmDRC3EzaOcUJc5ni7KevL?usp=drive_link" target="_blank" class="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-open mx-auto mb-2 text-yellow-500"><path d="m6 14 1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2"/></svg>
+                        <p class="font-semibold">Drive</p>
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="examModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('examModal')">&times;</span>
+            <h3 id="examModalTitle" class="text-xl font-bold mb-4"></h3>
+            <div id="examModalBody"></div>
+        </div>
+    </div>
+<script src="js/script.js"></script>
+</body>
+</html>
