@@ -1058,4 +1058,857 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update on resize
     window.addEventListener('resize', updateSidebarBehavior);
+
+    const exportButton = document.getElementById('exportPdfButton');
+    if (exportButton) {
+        exportButton.addEventListener('click', exportToPdf);
+    } else {
+        console.warn('Botão de exportar PDF não encontrado.');
+    }
 });
+
+// --- PDF Export Logic ---
+
+let currentY = 40; // Initial Y position for PDF content, with some margin
+const pageMargin = 40;
+const defaultLineHeight = 18;
+const defaultFontSize = 12;
+
+async function addTextWithPageBreaks(pdf, text, options = {}) {
+    const x = options.x || pageMargin;
+    let y = options.y || currentY;
+    const maxWidth = options.maxWidth || (pdf.internal.pageSize.width - (2 * pageMargin));
+    const lineHeight = options.lineHeight || defaultLineHeight;
+    const fontSize = options.fontSize || defaultFontSize;
+    const fontStyle = options.fontStyle || 'normal';
+
+    pdf.setFontSize(fontSize);
+    pdf.setFont(undefined, fontStyle); // Using undefined for font name to use default
+
+    const lines = pdf.splitTextToSize(String(text), maxWidth);
+
+    lines.forEach(line => {
+        if (y + lineHeight > pdf.internal.pageSize.height - pageMargin) {
+            pdf.addPage();
+            y = pageMargin; // Reset Y to top margin
+        }
+        pdf.text(line, x, y);
+        y += lineHeight;
+    });
+    currentY = y; // Update global currentY for the next element
+    return y; // Return the Y position after adding this text
+}
+
+// Helper function to check if html2canvas will be needed (can be refined)
+function needsHtml2Canvas() {
+    // For now, assume true if we plan to use it for any section that isn't plain text
+    // This can be made more specific if needed.
+    return true; 
+}
+
+async function exportToPdf() {
+    // Ensure jsPDF and html2canvas are loaded (if not embedded)
+    if (typeof jspdf === 'undefined' || (typeof html2canvas === 'undefined' && needsHtml2Canvas())) {
+        alert('Bibliotecas de PDF (jsPDF ou html2canvas) ainda não carregadas. Tente novamente em alguns segundos ou verifique o console para erros de carregamento das bibliotecas.');
+        console.error('jsPDF or html2canvas not loaded. Ensure they are included in index.html via CDN or locally.');
+        // Example:
+        // <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        // <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        return;
+    }
+
+    console.log('Iniciando exportação para PDF...');
+    const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+    currentY = pageMargin; // Reset Y for each new PDF export
+
+    // Placeholder for content generation
+    await addTextWithPageBreaks(pdf, 'Infográfico: Políticas Sociais no Federalismo Brasileiro', { fontSize: 20, fontStyle: 'bold'});
+    currentY += defaultLineHeight * 1.5; // Add some space
+
+    // Example of adding content from a section (will be expanded in next steps)
+    // const inicioSection = document.getElementById('inicio');
+    // if (inicioSection) {
+    //     const titleElement = inicioSection.querySelector('h2');
+    //     if (titleElement) {
+    //         await addTextWithPageBreaks(pdf, titleElement.innerText, { fontSize: 16, fontStyle: 'bold' });
+    //     }
+    //     const paragraphs = inicioSection.querySelectorAll('p');
+    //     for (const p of paragraphs) {
+    //         await addTextWithPageBreaks(pdf, p.innerText);
+    //     }
+    //     currentY += defaultLineHeight; // Add space before next section
+    // }
+
+
+    // 1. Resumo
+    currentY = await addResumoToPdf(pdf, currentY);
+
+    // 2. Linha do tempo
+    currentY = await addLinhaDoTempoToPdf(pdf, currentY);
+    
+    // 3. Flashcards
+    currentY = await addFlashcardsToPdf(pdf, currentY);
+
+    // 4. Mapa Mental
+    currentY = await addMapaMentalToPdf(pdf, currentY);
+
+    // 5. Personagens
+    currentY = await addPersonagensToPdf(pdf, currentY);
+
+    // 6. Glossário
+    currentY = await addGlossarioToPdf(pdf, currentY);
+
+    // 7. Correlações
+    currentY = await addCorrelacoesToPdf(pdf, currentY);
+
+    // 8. Quiz
+    currentY = await addQuizToPdf(pdf, currentY);
+
+    // 9. Exemplos de Provas
+    currentY = await addExemplosProvasToPdf(pdf, currentY);
+
+    // ... (other sections will be added progressively) ...
+
+    // Add Page Numbers
+    const pageCount = pdf.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i); // Go to page i
+        pdf.setFontSize(10);
+        pdf.setTextColor(100); // Gray color for page number
+        const pageNumText = `Página ${i} de ${pageCount}`;
+        const textWidth = pdf.getStringUnitWidth(pageNumText) * pdf.getFontSize() / pdf.internal.scaleFactor;
+        const textX = (pdf.internal.pageSize.width - textWidth) / 2; // Centered
+        const textY = pdf.internal.pageSize.height - 20; // 20 points from bottom
+        pdf.text(pageNumText, textX, textY);
+    }
+
+    console.log('Salvando PDF...');
+    pdf.save('infografico_politicas_sociais.pdf');
+    console.log('PDF export process completed.');
+}
+
+// --- Helper function to process P elements (handles tooltips) ---
+async function addProcessedParagraph(pdf, pElement, options = {}) {
+    const clonedP = pElement.cloneNode(true);
+    clonedP.querySelectorAll('.tooltip').forEach(tooltip => {
+        // Safely get the main text, assuming it's the first text node within the tooltip span
+        let mainText = '';
+        if (tooltip.firstChild && tooltip.firstChild.nodeType === Node.TEXT_NODE) {
+            mainText = tooltip.firstChild.textContent.trim();
+        } else { 
+            // Fallback or more complex logic if structure varies
+            // For now, attempt to get text from the first child element if no direct text node
+            mainText = tooltip.childNodes.length > 0 ? tooltip.childNodes[0].textContent.trim() : '';
+        }
+        tooltip.replaceWith(document.createTextNode(mainText));
+    });
+    // Remove any other unwanted elements like SVGs that might be inside paragraphs from other contexts
+    clonedP.querySelectorAll('svg').forEach(svg => svg.remove());
+
+    const text = clonedP.textContent.trim();
+    if (text) {
+       const yAfter = await addTextWithPageBreaks(pdf, text, { fontSize: defaultFontSize, ...options });
+       currentY = yAfter; // Ensure currentY is updated globally
+       return yAfter;
+    }
+    return currentY;
+}
+
+// --- Helper function to process BLOCKQUOTE elements ---
+async function addBlockquoteToPdf(pdf, blockquoteElement) {
+    const clonedBlockquote = blockquoteElement.cloneNode(true);
+    clonedBlockquote.querySelectorAll('.tooltip').forEach(tooltip => {
+        let mainText = '';
+        if (tooltip.firstChild && tooltip.firstChild.nodeType === Node.TEXT_NODE) {
+            mainText = tooltip.firstChild.textContent.trim();
+        } else {
+            mainText = tooltip.childNodes.length > 0 ? tooltip.childNodes[0].textContent.trim() : '';
+        }
+        tooltip.replaceWith(document.createTextNode(mainText));
+    });
+    const text = clonedBlockquote.textContent.trim();
+    if (text) {
+        const yAfter = await addTextWithPageBreaks(pdf, `> ${text}`, { 
+            fontSize: defaultFontSize, 
+            fontStyle: 'italic', 
+            x: pageMargin + 10, 
+            maxWidth: pdf.internal.pageSize.width - (2 * pageMargin) - 10 
+        });
+        currentY = yAfter + 5; // Add a bit of space after blockquote
+        return currentY;
+    }
+    return currentY;
+}
+
+// --- Helper function to process DETAILS elements ---
+async function addDetailsElementToPdf(pdf, detailsElement) {
+    const summary = detailsElement.querySelector('summary');
+    if (summary) {
+        const clonedSummary = summary.cloneNode(true);
+        clonedSummary.querySelectorAll('svg').forEach(svg => svg.remove()); // Remove SVG from summary
+        clonedSummary.querySelectorAll('.tooltip').forEach(tooltip => {
+            let mainText = '';
+            if (tooltip.firstChild && tooltip.firstChild.nodeType === Node.TEXT_NODE) {
+                mainText = tooltip.firstChild.textContent.trim();
+            } else {
+                 mainText = tooltip.childNodes.length > 0 ? tooltip.childNodes[0].textContent.trim() : '';
+            }
+            tooltip.replaceWith(document.createTextNode(mainText));
+        });
+        const summaryText = clonedSummary.textContent.trim();
+        currentY = await addTextWithPageBreaks(pdf, summaryText, { fontSize: 14, fontStyle: 'bold' });
+        currentY += 5; 
+    }
+
+    // Process content within details (P and BLOCKQUOTE tags)
+    // Iterate through childNodes to maintain order
+    for (const child of detailsElement.childNodes) {
+        if (child.nodeType === Node.ELEMENT_NODE) { // Check if it's an element
+            if (child.tagName === 'P') {
+                currentY = await addProcessedParagraph(pdf, child);
+                currentY += 5; 
+            } else if (child.tagName === 'BLOCKQUOTE') {
+                currentY = await addBlockquoteToPdf(pdf, child);
+                // addBlockquoteToPdf already adds some space
+            }
+        }
+    }
+    currentY += 5; // Space after the whole details block
+    return currentY;
+}
+
+
+// --- Function to add "Resumo" section to PDF ---
+async function addResumoToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('resumo');
+    if (!sectionElement) {
+        console.warn("Seção Resumo não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Resumo ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Resumo", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 10; 
+
+    const titleElement = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (titleElement) {
+        currentY = await addTextWithPageBreaks(pdf, titleElement.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    const contentDiv = sectionElement.querySelector('.bg-white.p-6');
+    if (!contentDiv) {
+        console.warn("Div de conteúdo principal da Seção Resumo não encontrada.");
+        return currentY;
+    }
+    
+    // Iterate over child nodes of the main content div to process elements in order
+    for (const child of contentDiv.childNodes) {
+        if (child.nodeType !== Node.ELEMENT_NODE) continue; // Skip non-element nodes
+
+        switch (child.tagName) {
+            case 'H3':
+                currentY = await addTextWithPageBreaks(pdf, child.textContent.trim(), { fontSize: 14, fontStyle: 'bold' });
+                currentY += 5;
+                break;
+            case 'P':
+                currentY = await addProcessedParagraph(pdf, child);
+                currentY += 5; // Space after paragraph
+                break;
+            case 'DETAILS':
+                currentY = await addDetailsElementToPdf(pdf, child);
+                // addDetailsElementToPdf already adds space
+                break;
+            // BLOCKQUOTE elements are expected to be inside DETAILS for this section,
+            // but if there were direct blockquotes in contentDiv, they could be handled here.
+        }
+    }
+
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Resumo adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Linha do Tempo" section to PDF ---
+async function addLinhaDoTempoToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('linhadotempo');
+    if (!sectionElement) {
+        console.warn("Seção Linha do Tempo não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Linha do Tempo ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Linha do Tempo", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 10;
+
+    const titleElement = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (titleElement) {
+        currentY = await addTextWithPageBreaks(pdf, titleElement.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    const timelineItems = sectionElement.querySelectorAll('div.timeline-item');
+    if (!timelineItems || timelineItems.length === 0) {
+        console.warn("Nenhum item da linha do tempo encontrado.");
+        return currentY;
+    }
+
+    for (const item of timelineItems) {
+        const h4Element = item.querySelector('h4');
+        const subtitleElement = item.querySelector('p.text-sm.text-gray-500');
+        const descriptionElement = item.querySelector('p.mt-1.text-sm');
+
+        if (h4Element) {
+            currentY = await addTextWithPageBreaks(pdf, h4Element.textContent.trim(), { fontSize: 14, fontStyle: 'bold' });
+            currentY += 2; // Smaller space after year
+        }
+        if (subtitleElement) {
+            currentY = await addTextWithPageBreaks(pdf, subtitleElement.textContent.trim(), { fontSize: 12, fontStyle: 'italic' });
+            currentY += 3; // Smaller space after subtitle
+        }
+        if (descriptionElement) {
+            // Adapt tooltip stripping logic from addProcessedParagraph
+            const clonedDesc = descriptionElement.cloneNode(true);
+            clonedDesc.querySelectorAll('.tooltip').forEach(tooltip => {
+                let mainText = '';
+                if (tooltip.firstChild && tooltip.firstChild.nodeType === Node.TEXT_NODE) {
+                    mainText = tooltip.firstChild.textContent.trim();
+                } else {
+                    mainText = tooltip.childNodes.length > 0 ? tooltip.childNodes[0].textContent.trim() : '';
+                }
+                tooltip.replaceWith(document.createTextNode(mainText));
+            });
+            clonedDesc.querySelectorAll('svg').forEach(svg => svg.remove()); // Just in case
+            
+            const cleanedText = clonedDesc.textContent.trim();
+            if (cleanedText) {
+                currentY = await addTextWithPageBreaks(pdf, cleanedText, { fontSize: 12 });
+            }
+        }
+        currentY += 10; // Space after each timeline item
+    }
+
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Linha do Tempo adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Flashcards (FAQ)" section to PDF ---
+async function addFlashcardsToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('flashcards'); 
+    if (!sectionElement) {
+        console.warn("Seção Flashcards (FAQ) não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Flashcards (FAQ) ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Flashcards (FAQ)", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+    const h2Element = sectionElement.querySelector('h2');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+    }
+    currentY += 10;
+
+    if (!faqData || faqData.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum flashcard disponível.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum flashcard encontrado.");
+        return currentY;
+    }
+
+    const columnMargin = 20; 
+    const leftColumnX = pageMargin;
+    const columnWidth = (pdf.internal.pageSize.width - (2 * pageMargin) - columnMargin) / 2;
+    const rightColumnX = pageMargin + columnWidth + columnMargin;
+    
+    let rowStartY = currentY;
+    let leftCardEndY = currentY; // Tracks the bottom Y of the card in the left column for the current row
+
+    for (let i = 0; i < faqData.length; i++) {
+        const card = faqData[i];
+        let currentX;
+        let tempY = rowStartY; // Use a temporary Y for the current card, starting at rowStartY
+
+        if (i % 2 === 0) { // Left column
+            currentX = leftColumnX;
+        } else { // Right column
+            currentX = rightColumnX;
+        }
+
+        // Add Question
+        let yAfterQuestion = await addTextWithPageBreaks(pdf, card.q, { 
+            x: currentX, y: tempY, 
+            maxWidth: columnWidth, 
+            fontSize: 13, fontStyle: 'bold' 
+        });
+        tempY = yAfterQuestion + 5; // Add small space before answer
+
+        // Add Answer
+        let yAfterAnswer = await addTextWithPageBreaks(pdf, card.a, { 
+            x: currentX, y: tempY, 
+            maxWidth: columnWidth, 
+            fontSize: 12 
+        });
+        let cardEndY = yAfterAnswer; // This is the end Y for the current card
+
+        if (i % 2 === 0) { // Left column card was just processed
+            leftCardEndY = cardEndY;
+            if (i === faqData.length - 1) { // This is the last card and it's in the left column
+                currentY = leftCardEndY + 20; // Ensure space after this last card
+            }
+        } else { // Right column card was just processed
+            // The new currentY (which will become rowStartY for the next row) must be below the taller of the two cards
+            currentY = Math.max(leftCardEndY, cardEndY) + 20; 
+            rowStartY = currentY; 
+        }
+    }
+    
+    // If faqData is empty or has only one card, currentY is handled.
+    // If faqData.length is even, currentY is updated after the right card.
+    // If faqData.length is odd, currentY is updated after the last (left) card.
+    
+    console.log("Seção Flashcards (FAQ) adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Recursive helper to add Mind Map Node Info to PDF ---
+async function addAllMindMapNodeInfo(pdf, node, indentLevel = 0) {
+    const indent = "  ".repeat(indentLevel); // Two spaces per indent level
+    
+    // Add Node Text (as a small heading)
+    if (node.text) {
+        currentY = await addTextWithPageBreaks(pdf, `${indent}${node.text.replace(/\n/g, ' ')}`, { // Replace newlines in titles
+            fontSize: 11, 
+            fontStyle: 'bold',
+            // Ensure X position is respected for indentation, if addTextWithPageBreaks uses pageMargin by default
+            x: pageMargin + (indentLevel * 10) // Optional: Indent text visually in PDF
+        });
+    }
+
+    // Add Node Info
+    if (node.info) {
+        currentY = await addTextWithPageBreaks(pdf, `${indent}${node.info}`, { 
+            fontSize: 10,
+            x: pageMargin + (indentLevel * 10) // Optional: Indent text visually in PDF
+        });
+    }
+    currentY += 5; // Space after each node's info
+
+    if (node.children && node.children.length > 0) {
+        for (const child of node.children) {
+            // currentY is updated globally by addTextWithPageBreaks and within this loop
+            await addAllMindMapNodeInfo(pdf, child, indentLevel + 1);
+        }
+    }
+    return currentY; // Return the updated Y position
+}
+
+
+// --- Function to add "Mapa Mental" section to PDF ---
+async function addMapaMentalToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('mapamental');
+    if (!sectionElement) {
+        console.warn("Seção Mapa Mental não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Mapas Mentais ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Mapas Mentais", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 5;
+    }
+    
+    const introParagraph = sectionElement.querySelector('p.mb-4.text-slate-400');
+    if (introParagraph) {
+        // For this specific paragraph, we might want to use addProcessedParagraph if it could contain tooltips
+        // or just its textContent if we are sure it's plain.
+        currentY = await addProcessedParagraph(pdf, introParagraph, { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+    }
+
+    if (!mindMapData || Object.keys(mindMapData).length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum mapa mental disponível.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum mapa mental encontrado.");
+        return currentY;
+    }
+    
+    const mindMapSvgElement = document.getElementById('mindmapSvg');
+
+    for (constmapKey of Object.keys(mindMapData)) {
+        const mapDefinition = mindMapData[mapKey];
+        
+        currentY = await addTextWithPageBreaks(pdf, mapDefinition.title, { fontSize: 14, fontStyle: 'bold' });
+        currentY += 10;
+
+        if (mindMapSvgElement && typeof html2canvas !== 'undefined') {
+            // Ensure the specific map is rendered to the SVG element
+            renderMindMap(mapDefinition.data); 
+            await new Promise(resolve => setTimeout(resolve, 200)); // Wait for SVG to render
+
+            try {
+                const canvas = await html2canvas(mindMapSvgElement, { 
+                    scale: 1.5, 
+                    logging: false, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff' // Explicitly set background
+                });
+                const imgDataUrl = canvas.toDataURL('image/png');
+                
+                const pdfImgWidth = pdf.internal.pageSize.width - (2 * pageMargin);
+                const aspectRatio = canvas.width / canvas.height;
+                let pdfImgHeight = pdfImgWidth / aspectRatio;
+
+                // Cap image height to avoid excessively long images, e.g., max 60% of page height
+                const maxImgHeight = pdf.internal.pageSize.height * 0.6;
+                if (pdfImgHeight > maxImgHeight) {
+                    pdfImgHeight = maxImgHeight;
+                }
+
+                if (currentY + pdfImgHeight > pdf.internal.pageSize.height - pageMargin) {
+                    pdf.addPage();
+                    currentY = pageMargin;
+                }
+                pdf.addImage(imgDataUrl, 'PNG', pageMargin, currentY, pdfImgWidth, pdfImgHeight);
+                currentY += pdfImgHeight + 10; 
+            } catch (error) {
+                console.error(`Error rendering mind map '${mapDefinition.title}' to image:`, error);
+                currentY = await addTextWithPageBreaks(pdf, "[Erro ao renderizar imagem do mapa mental. Conteúdo textual abaixo.]", { fontSize: 10, fontStyle: 'italic' });
+                currentY += 5;
+            }
+        } else {
+            currentY = await addTextWithPageBreaks(pdf, "[Visualização do mapa mental como imagem não disponível (SVG ou html2canvas não carregado/encontrado). Conteúdo textual abaixo.]", { fontSize: 10, fontStyle: 'italic' });
+            currentY += 5;
+        }
+        
+        // Add textual content for the current mind map
+        currentY = await addTextWithPageBreaks(pdf, "Conteúdo Textual do Mapa:", { fontSize: 12, fontStyle: 'bold' });
+        currentY += 5;
+        currentY = await addAllMindMapNodeInfo(pdf, mapDefinition.data); // Pass the root node
+        currentY += 15; // Extra space after each complete mind map (image + text)
+    }
+    
+    console.log("Seção Mapas Mentais adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Personagens" section to PDF ---
+async function addPersonagensToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('personagens');
+    if (!sectionElement) {
+        console.warn("Seção Personagens não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Personagens ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Personagens e Atores Relevantes", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (h2Element) {
+        // The main title "Personagens e Atores Relevantes" is already added above with size 18.
+        // If there's a specific H2 inside the section with slightly different text or for structure,
+        // we might add it or choose to use the one above as the primary.
+        // For now, let's assume the one above is sufficient and we just add spacing.
+        // If h2Element.textContent.trim() is different, we could add it:
+        // currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 5; // Additional spacing if H2 was present
+    }
+    
+    const characterItems = sectionElement.querySelectorAll('.grid > div.bg-white.p-4.rounded-lg.shadow-md');
+    if (!characterItems || characterItems.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum personagem/ator listado.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum item de personagem encontrado.");
+        return currentY;
+    }
+
+    for (const item of characterItems) {
+        const nameElement = item.querySelector('h4');
+        const descriptionElement = item.querySelector('p.text-sm.mt-1'); // Standard p selector
+
+        if (nameElement) {
+            currentY = await addTextWithPageBreaks(pdf, nameElement.textContent.trim(), { fontSize: 14, fontStyle: 'bold' });
+            currentY += 3; // Space after name
+        }
+
+        if (descriptionElement) {
+            // Use the existing addProcessedParagraph to handle tooltips and add text
+            currentY = await addProcessedParagraph(pdf, descriptionElement, { fontSize: 12 });
+        }
+        
+        currentY += 10; // Space after each character entry
+    }
+    
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Personagens adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Glossário" section to PDF ---
+async function addGlossarioToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('glossario');
+    if (!sectionElement) {
+        console.warn("Seção Glossário não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Glossário ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Glossário", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    if (!glossarioData || glossarioData.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum termo no glossário.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum termo de glossário encontrado.");
+        return currentY;
+    }
+
+    for (const item of glossarioData) {
+        currentY = await addTextWithPageBreaks(pdf, item.term, { fontSize: 14, fontStyle: 'bold' });
+        currentY += 3; // Space after term
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.def;
+        
+        tempDiv.querySelectorAll('.tooltip').forEach(tooltip => {
+            let mainText = '';
+            // Attempt to get text directly preceding the .tooltiptext span
+            // This assumes the main text is directly before the inner span, possibly with other HTML tags.
+            let node = tooltip.firstChild;
+            let textContentBeforeTooltipText = '';
+            while(node) {
+                if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('tooltiptext')) {
+                    break;
+                }
+                textContentBeforeTooltipText += node.textContent;
+                node = node.nextSibling;
+            }
+            mainText = textContentBeforeTooltipText.trim();
+
+            if (!mainText) { // Fallback if the above logic doesn't capture text (e.g. only tooltiptext present)
+                 // Try to get text of the first child if it's a text node
+                if (tooltip.firstChild && tooltip.firstChild.nodeType === Node.TEXT_NODE) {
+                    mainText = tooltip.firstChild.textContent.trim();
+                } else { 
+                    // Last resort, try to get any text content excluding the tooltiptext span's content
+                    const tooltipTextSpan = tooltip.querySelector('.tooltiptext');
+                    mainText = tooltip.textContent.replace(tooltipTextSpan?.textContent || '', '').trim();
+                }
+            }
+            tooltip.replaceWith(document.createTextNode(mainText));
+        });
+
+        const cleanedDefinition = tempDiv.textContent.trim();
+        if (cleanedDefinition) {
+            currentY = await addTextWithPageBreaks(pdf, cleanedDefinition, { fontSize: 12 });
+        }
+        
+        currentY += 10; // Space after each glossary entry
+    }
+
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Glossário adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Correlações" section to PDF ---
+async function addCorrelacoesToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('correlacoes');
+    if (!sectionElement) {
+        console.warn("Seção Correlações não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Correlações ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Correlações", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    const correlationBlocks = sectionElement.querySelectorAll('div.space-y-6 > div.bg-white.p-6');
+    if (!correlationBlocks || correlationBlocks.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhuma correlação listada.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum bloco de correlação encontrado.");
+        return currentY;
+    }
+
+    for (const block of correlationBlocks) {
+        const titleElement = block.querySelector('h3');
+        const paragraphElement = block.querySelector('p');
+
+        if (titleElement) {
+            currentY = await addTextWithPageBreaks(pdf, titleElement.textContent.trim(), { fontSize: 14, fontStyle: 'bold' });
+            currentY += 3; // Space after title
+        }
+
+        if (paragraphElement) {
+            // Use the existing addProcessedParagraph which handles tooltips within P tags
+            // It internally clones the paragraph and processes .tooltip elements
+            currentY = await addProcessedParagraph(pdf, paragraphElement, { fontSize: 12 });
+        }
+        
+        currentY += 10; // Space after each correlation block
+    }
+
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Correlações adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Quiz" section to PDF ---
+async function addQuizToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('quiz');
+    if (!sectionElement) {
+        console.warn("Seção Quiz não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Quiz ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Quiz", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    if (!quizData || quizData.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum quiz disponível.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum item de quiz encontrado.");
+        return currentY;
+    }
+
+    for (let qIndex = 0; qIndex < quizData.length; qIndex++) {
+        const item = quizData[qIndex];
+
+        // Question
+        currentY = await addTextWithPageBreaks(pdf, `${qIndex + 1}. ${item.question}`, { fontSize: 13, fontStyle: 'bold' });
+        currentY += 5; // Space after question
+
+        // Options
+        if (item.options && item.options.length > 0) {
+            for (let optIndex = 0; optIndex < item.options.length; optIndex++) {
+                const optionText = `   ${String.fromCharCode(97 + optIndex)}) ${item.options[optIndex]}`;
+                currentY = await addTextWithPageBreaks(pdf, optionText, { fontSize: 12, x: pageMargin + 15 });
+            }
+        }
+        currentY += 5; // Space after options
+
+        // Answer
+        currentY = await addTextWithPageBreaks(pdf, `Resposta correta: ${item.answer}`, { fontSize: 12, fontStyle: 'bold' });
+        currentY += 3; // Space after answer
+
+        // Explanation
+        if (item.explanation) {
+            currentY = await addTextWithPageBreaks(pdf, item.explanation, { fontSize: 12, fontStyle: 'italic' });
+        }
+        
+        currentY += 15; // Space after each complete quiz item
+    }
+
+    currentY += defaultLineHeight; // Add some space after the section
+    console.log("Seção Quiz adicionada ao PDF.");
+    return currentY;
+}
+
+// --- Function to add "Exemplos de Provas" section to PDF ---
+async function addExemplosProvasToPdf(pdf, initialY) {
+    currentY = initialY;
+    const sectionElement = document.getElementById('exemplosprovas');
+    if (!sectionElement) {
+        console.warn("Seção Exemplos de Provas não encontrada para PDF.");
+        return currentY;
+    }
+
+    console.log("Adicionando Seção Exemplos de Provas ao PDF...");
+
+    currentY = await addTextWithPageBreaks(pdf, "Exemplos de Provas", { fontSize: 18, fontStyle: 'bold' });
+    currentY += 5;
+
+    const h2Element = sectionElement.querySelector('h2.text-3xl.font-bold');
+    if (h2Element) {
+        currentY = await addTextWithPageBreaks(pdf, h2Element.textContent.trim(), { fontSize: 16, fontStyle: 'bold' });
+        currentY += 10;
+    }
+
+    if (!examExamplesData || examExamplesData.length === 0) {
+        currentY = await addTextWithPageBreaks(pdf, "Nenhum exemplo de prova disponível.", { fontSize: 12, fontStyle: 'italic' });
+        currentY += 10;
+        console.log("Nenhum exemplo de prova encontrado.");
+        return currentY;
+    }
+
+    for (const exam of examExamplesData) {
+        currentY = await addTextWithPageBreaks(pdf, `Prova Versão ${exam.version}`, { fontSize: 14, fontStyle: 'bold' });
+        currentY += 10;
+
+        for (let qIdx = 0; qIdx < exam.questions.length; qIdx++) {
+            const question = exam.questions[qIdx];
+
+            // Question Text
+            currentY = await addTextWithPageBreaks(pdf, `${qIdx + 1}. ${question.text}`, { fontSize: 13, fontStyle: 'bold' });
+            currentY += 5;
+
+            // Gabarito
+            currentY = await addTextWithPageBreaks(pdf, "Gabarito:", { fontSize: 12, fontStyle: 'bold' });
+            currentY = await addTextWithPageBreaks(pdf, question.gabarito, { fontSize: 12, x: pageMargin + 10 }); // Indented
+            currentY += 5;
+
+            // Respostas Exemplo
+            currentY = await addTextWithPageBreaks(pdf, "Exemplos de Resposta:", { fontSize: 12, fontStyle: 'bold' });
+            if (question.respostasExemplo && question.respostasExemplo.length > 0) {
+                for (let i = 0; i < question.respostasExemplo.length; i++) {
+                    const resposta = question.respostasExemplo[i];
+                    currentY = await addTextWithPageBreaks(pdf, `Exemplo ${i + 1}:`, { fontSize: 12, fontStyle: 'italic', x: pageMargin + 10 }); // Indented label
+                    currentY = await addTextWithPageBreaks(pdf, resposta, { fontSize: 12, x: pageMargin + 20 }); // Further indented text
+                    currentY += 5;
+                }
+            } else {
+                currentY = await addTextWithPageBreaks(pdf, "Nenhum exemplo de resposta fornecido.", { fontSize: 12, fontStyle: 'italic', x: pageMargin + 10 });
+                currentY += 5;
+            }
+            
+            currentY += 15; // Space after each complete question block
+        }
+        currentY += 20; // Space after each exam version
+    }
+
+    currentY += defaultLineHeight; // Add some space after the entire section
+    console.log("Seção Exemplos de Provas adicionada ao PDF.");
+    return currentY;
+}
